@@ -1,0 +1,57 @@
+[
+    {
+        "id": 1,
+        "name": "Rezystor 820 ohm",
+        "category": "smd",
+        "description": "",
+        "price": 0.5,
+        "image": "https://8.allegroimg.com/s512/06ff0d/0e2660e7409cb5840c26a4104548/Rezystor-opornik-SMD-68K-68kOhm-5-0805",
+        "author": "admin"
+    },
+    {
+        "id": 1,
+        "name": "Programator do ESP",
+        "category": "projekty",
+        "description": "",
+        "price": 120,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEipib6KPe-RTDUxvbJICoxgp9Dcj4FjDWgxecsiRtdI3eNDYoeG_sfCPmQYv7NBA6d4SUxIzYV0inXnJwe36NZLpkN4vM7xKbymfPsV5wIWQfwxqcE1tC9hU7Z_c2Y3MkpfhQkQ4V9AHWki/s200/20161031_171152.jpg",
+        "author": "admin"
+    },
+    {
+        "id": 1,
+        "name": "Multimetr YATO YT-7380",
+        "category": "urządzenia przenośne",
+        "description": "",
+        "price": 80,
+        "image": "https://toya24.pl/pol_pl_MULTIMETR-MIERNIK-CYFROWY-BUZER-10001468_1.jpg",
+        "author": "admin"
+    },
+    {
+        "id": 1,
+        "name": "SH3561A",
+        "category": "projekty",
+        "description": "",
+        "price": 50,
+        "image": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhPNpzpwY0dfupB-Nsf-OaZFhVqztr4N2S6N03yW3rrQQc-abjOveG5BXyUMnevKUPXwlJmsVpFywyE_ns8MlcOhiBiLj_r5NM3UP5Fr76cNZn_MFzaUcZn6_F5Kn9uP4bW2Ce27GkHmwFi/s320/20160923_151049.jpg",
+        "author": "admin"
+    },
+    {
+        "id": 1,
+        "name": "Multimetr stołowy Agilent 34450A",
+        "category": "urządzenia stołowe",
+        "description": "",
+        "price": 1300,
+        "image": "https://www.merazet.pl/wp-content/uploads/bc2f3d778d555cb1_large-1.jpg",
+        "author": "admin"
+    },
+    {
+        "id": 1,
+        "name": "Kondensator SMD 10uF/25V",
+        "category": "smd",
+        "description": "",
+        "price": 1.5,
+        "image": "https://elbrod.pl/images/produkty/420_.jpg",
+        "author": "admin"
+    }
+
+]
