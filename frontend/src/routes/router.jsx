@@ -6,6 +6,7 @@ import Searchpage from "../pages/Searchpage";
 import Shoppage from "../pages/Shoppage";
 import Itempage from "../pages/Itempage";
 import Login from "../pages/Login";
+import Register from "../pages/Register";
 
 
 const router = createBrowserRouter([
@@ -41,7 +42,12 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />
+  },
+  {
+    path: "/register",
+    element: <Register />
   }
+
 ]);
 
 export default router;
