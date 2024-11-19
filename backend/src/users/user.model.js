@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
 
 });
 
+
+// proces hashowania haseł
 userSchema.pre('save', async function (done) {
 
     if (!this.isModified('password'))
@@ -19,6 +21,14 @@ userSchema.pre('save', async function (done) {
     done();
 
 })
+
+
+
+//porównywanie haseł
+userSchema.methods.comparePassword = function(inputedPassword) {
+    return bcrypt.compare(inputedPassword, this.password)
+    
+}
 
 
 const User = new mongoose.model('User', userSchema);
