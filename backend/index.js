@@ -30,7 +30,7 @@ app.use(cookieParser());
 
 
 app.get('/', (req, res) => {
-  res.send('Serwer połączony!!!')
+  res.json('Serwer połączony!!!')
 });
 
 

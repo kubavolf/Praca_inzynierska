@@ -1,5 +1,6 @@
 const express = require('express');
 const UserModel = require('./user.model');
+const tokenGeneration = require('./tokens');
 const router = express.Router();
 
 
@@ -12,11 +13,11 @@ router.post('/register', async (req, res) => {
 
         const newUser = new UserModel({ username, email, password });
         await newUser.save();
-        res.status(201).send({ message: "Rejestracja pomyślna" })
+        res.status(201).json({ message: "Rejestracja pomyślna" })
 
-    } catch (error) {
-        console.error("Nie udało się zarejestrować", error);
-        res.status(500).send({ message: "Nie udało się zarejestrować" })
+    } catch (err) {
+        console.error("Nie udało się zarejestrować", err);
+        res.status(500).json({ message: "Nie udało się zarejestrować" })
 
     }
 
@@ -30,25 +31,44 @@ router.post('/login', async (req, res) => {
         const user = await UserModel.findOne({ email }); //sprawdzenie czy taki email istnieje w bazie
 
         if (!user) {
-            return res.status(404).send({ message: 'Takie konto nie istnieje' })
+            return res.status(404).json({ message: 'Takie konto nie istnieje' })
         }
         const passwordMatch = await user.comparePassword(password);
 
         if (!passwordMatch) {
-            return res.status(401).send({ message: 'Błędne hasło lub email' })
+            return res.status(401).json({
+                message: 'Błędne hasło lub email' })
         }
 
-        res.status(200).send({ message: "Logowanie pomyślne", user })
-    
+        const token = await tokenGeneration(user._id);
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None'
+        })
+
+        res.status(200).json({
+            message: "Logowanie pomyślne", token, userData: {
+                _id: user._id,
+                status: user.status,
+                username: user.username,
+                email: user.email
+            }
+
+        })
+
     }
     catch (err) {
         console.error('Błąd podczas logowania:', err);
-        res.status(500).json({message: 'Błąd podczas logowania'});
+        res.status(500).json({ message: 'Błąd podczas logowania' });
 
     }
 
-    
+
 })
+
+
 
 
 
