@@ -5,7 +5,8 @@ const userSchema = new mongoose.Schema({
     status: { type: String, default: 'user' },
     username: { type: String, require: true, unique: true },
     email: { type: String, require: true, unique: true },
-    password: { type: String, require: true }
+    password: { type: String, require: true },
+    picture: {type: String, default: 'https://static.vecteezy.com/system/resources/previews/020/765/399/non_2x/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg'}
 
 });
 
@@ -31,6 +32,6 @@ userSchema.methods.comparePassword = function(inputedPassword) {
 }
 
 
-const User = new mongoose.model('User', userSchema);
+const UserModel = new mongoose.model('User', userSchema);
 
-module.exports = User;
+module.exports = UserModel;
