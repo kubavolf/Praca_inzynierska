@@ -133,12 +133,13 @@ router.patch('/users/:userId', async (req, res) => {
 //aktualizacja danych
 router.patch('/edit-profile', async (req, res) => {
     try {
-        const { userId, username, email, picture } = req.body;
+        const { userId, username, email, picture, phoneNumb } = req.body;
 
         const updatedInfo = {};
         if (username) updatedInfo.username = username;
         if (email) updatedInfo.email = email;
         if (picture) updatedInfo.picture = picture;
+        if(phoneNumb) updatedInfo.phoneNumb = phoneNumb;
 
         const updatedUser = await UserModel.findByIdAndUpdate(
             userId,
