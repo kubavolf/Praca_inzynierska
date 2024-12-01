@@ -52,9 +52,10 @@ router.post('/login', async (req, res) => {
         res.status(200).json({
             message: "Logowanie pomyślne", token, userData: {
                 _id: user._id,
-                status: user.status,
+                level: user.level,
                 username: user.username,
-                email: user.email
+                email: user.email,
+                picture: user.picture
             }
 
         })
@@ -102,15 +103,15 @@ router.get('/users', async (req, res) => {
 
 
 
-//aktualizacja statusu
+//aktualizacja levelu
 router.patch('/users/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
-        const { status } = req.body;
+        const { level } = req.body;
 
         const updatedUser = await UserModel.findByIdAndUpdate(
             userId,
-            { status },
+            { level },
             {
                 new: true,
                 runValidators: true

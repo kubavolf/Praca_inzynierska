@@ -14,7 +14,7 @@ const tokenVerify = (req, res, next) => {
             return res.status(401).json({message: 'Błędny token'})
         }
         req.userId = decoded.userId;
-        req.status = decoded.status;
+        req.level = decoded.level;
         next();
     }
     catch (error) {

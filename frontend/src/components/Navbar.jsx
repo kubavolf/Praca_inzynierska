@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom'
 
 
@@ -8,6 +9,23 @@ const Navbar = () => {
   const toggleMenu = () => {
     setMenuVisible(!isVisible); //funkcja zmienia wartość isVisible na przeciwną
   };
+
+
+  //obsluga zalogowanego użytkownika
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.logging);
+  console.log(user?.picture);
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleUserMenu = () => {
+    setIsOpen(!isOpen);
+  }
+
+  
+
+
+
 
   const navLinks = () => (
     <>
@@ -38,17 +56,24 @@ const Navbar = () => {
         <div className='icons_element relative'>
 
           <span>
+
             <Link to="/search">
               {/* dodanie elementu z REMIX */}
               <i className="ri-search-eye-line hover:text-purple-600"></i>
             </Link>
+
           </span>
-
-
           <span>
-            <Link to="login">
+
+            {
+            user && user ? (<>
+            <img src={user?.picture} alt="" className='cursor-pointer size-10 rounded-xl' />
+            
+            </>) : (<Link to="login">
               <i className='ri-user-line'></i>
-            </Link>
+            </Link>)}
+
+           
           </span>
 
 
@@ -56,7 +81,9 @@ const Navbar = () => {
       </nav>
 
       {/* Rozwijanie Menu, otwierane przyciksiem. jak isVisible jest true to wyświetla menu*/}
+
       {isVisible && (
+
         <ul className='sm:hidden bg-violet-400 flex flex-col space-y-4 mt-4 px-4'>
           {navLinks()}
         </ul>

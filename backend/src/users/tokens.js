@@ -11,7 +11,7 @@ const tokenGeneration = async (userId) => {
 
         }
 
-        const token = jwt.sign({ userId: user._id, status: user.status },
+        const token = jwt.sign({ userId: user._id, level: user.level },
             TOKEN_JWT, { expiresIn: "30min" });
         return token;
     }
