@@ -18,7 +18,7 @@ const tokenVerify = (req, res, next) => {
         next();
     }
     catch (error) {
-        console.error('Podczas procesu weryfikacji wystąpił błąd', err);
+        console.error('Podczas procesu weryfikacji wystąpił błąd', error);
         res.status(401).json({message: 'Podczas procesu weryfikacji wystąpił błąd'})
 
     }

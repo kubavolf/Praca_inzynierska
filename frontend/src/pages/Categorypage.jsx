@@ -1,21 +1,17 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React from 'react';
+import { useParams } from 'react-router-dom';
 
-import items from "../data/items.json";
 import ItemCard from '../components/ItemCard';
+import { useFetchItemsQuery } from '../store/itemApi';
 
-
-const Categorypage = () => {
+const CategoryPage = () => {
   const { categoryName } = useParams();
-  const [filtProd, setFilt] = useState([]);
 
-  useEffect(() => {
-    const filtered = items.filter((item) => item.category === categoryName.toLowerCase());
-
-    setFilt(filtered);
-  }, [categoryName]
-  )
-
+  const { data: items = [], isLoading} = useFetchItemsQuery({
+    category: categoryName.toLowerCase(),
+    minPrice: '',
+    maxPrice: ''
+  });
 
   return (
     <>
@@ -23,14 +19,13 @@ const Categorypage = () => {
         <h2>{categoryName}</h2>
       </section>
 
-
       <div className='standard_element'>
-        <ItemCard items={filtProd} />
-
+        {isLoading && <p>Ładowanie...</p>}
+        {!isLoading && items.length === 0 && <p>Brak ogłoszeń w tej kategorii.</p>}
+        {!isLoading && items.length > 0 && <ItemCard items={items} />}
       </div>
-
     </>
-  )
-}
+  );
+};
 
-export default Categorypage
+export default CategoryPage;

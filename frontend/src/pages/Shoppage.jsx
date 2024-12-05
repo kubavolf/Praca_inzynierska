@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 
-import itemsData from "../data/items.json";
+
 import ItemCard from '../components/ItemCard';
 import Itemfilter from '../components/Itemfilter';
+import { useFetchItemsQuery } from '../store/itemApi';
 
 
 
@@ -12,59 +13,45 @@ const filtering = {
 };
 
 
-
 const Shoppage = () => {
 
-    const [items, setItems] = useState(itemsData);
     const [filtState, setFiltState] = useState({
         category: 'wszystkie',
-        priceRange: ''
+        customMinPrice: '',
+        customMaxPrice: ''
     });
 
-    const startFilt = () => {
-        let filtItems = itemsData;
 
-        //KATEGORIE
 
-        if (filtState.category && filtState.category !== 'wszystkie') {
+  
 
-            filtItems = filtItems.filter(item => item.category === filtState.category)
+    const { data: items = [], isLoading, isError } = useFetchItemsQuery({
+        category: filtState.category,
+        minPrice: filtState.customMinPrice || '',
+        maxPrice: filtState.customMaxPrice || ''
+    });
 
-        }
 
-        //CENA
 
-        const { priceRange, customMinPrice, customMaxPrice } = filtState;
 
-        // Czy wpisal ceny?
-        let minPrice = customMinPrice ? parseFloat(customMinPrice) : 0;
-        let maxPrice = customMaxPrice ? parseFloat(customMaxPrice) : Infinity;
-
-        // nadpisz jesli tak
-        if (priceRange) {
-            const [rangeMin, rangeMax] = priceRange.split('-').map(Number);
-            minPrice = rangeMin;
-            maxPrice = rangeMax;
-        }
-
-        // Filtrowanie według cen
-        filtItems = filtItems.filter(item => item.price >= minPrice && item.price <= maxPrice);
-
-        // Zaktualizowanie przefiltrowanej listy
-        setItems(filtItems);
-    };
-
-    useEffect(() => { startFilt() }, [filtState])
 
     //usun filtr
 
     const resetFilt = () => {
         setFiltState({
             category: 'wszystkie',
-            priceRange: ''
+            customMinPrice: '',
+            customMaxPrice: ''
         })
-    }
+    };
 
+    console.log('Filtry wysyłane do API:', {
+        category: filtState.category,
+        minPrice: filtState.customMinPrice,
+        maxPrice: filtState.customMaxPrice,
+    });
+
+    console.log('Pobrane przedmioty:', items);
 
 
     return (
@@ -89,7 +76,10 @@ const Shoppage = () => {
                         <h3 className='mt-10 mb-10 font-bold text-2xl'>
                             Aktualne Ogłoszenia: {items.length}
                         </h3>
-                        <ItemCard items={items} />
+                        {isLoading && <p>Ładowanie...</p>}
+                        {isError && <p>Wystąpił błąd podczas pobierania danych.</p>}
+                        {!isLoading && items.length === 0 && <p>Brak ogłoszeń pasujących do filtrów.</p>}
+                        {!isLoading && items.length > 0 && <ItemCard items={items} />}
 
 
 

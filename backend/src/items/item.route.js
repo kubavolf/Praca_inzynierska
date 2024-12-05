@@ -1,5 +1,7 @@
 const express = require('express');
 const ItemModel = require('./item.model');
+const { verify } = require('jsonwebtoken');
+const tokenVerify = require('../users/tokenVerify');
 const router = express.Router();
 
 // Dodawanie nowego itemu
@@ -65,43 +67,60 @@ router.get('/:id', async (req, res) => {
 });
 
 // Aktualizacja
-router.patch('/:itemId', async (req, res) => {
+router.patch('/edit-item/:id', tokenVerify, async (req, res) => {
     try {
-        const itemId = req.params;
-        const { name, category, description, price, image, author } = req.body;
+        const itemId = req.params.id;
 
-        const updatedItem = await ItemModel.findByIdAndUpdate(
-            itemId,
-            { name, category, description, price, image, author },
-            { new: true, runValidators: true }
-        );
+        // Znajdź item, aby sprawdzić autora
+        const item = await ItemModel.findById(itemId);
 
-        if (!updatedItem) {
+        if (!item) {
             return res.status(404).json({ message: 'Nie znaleziono takiego itemu' });
         }
 
+        // Sprawdź, czy zalogowany użytkownik jest autorem
+        if (item.author.toString() !== req.userId) {
+            return res.status(403).json({ message: 'Brak uprawnień do edytowania tego itemu' });
+        }
+
+        // Aktualizuj item
+        const { name, category, description, price, image } = req.body;
+
+        const updatedItem = await ItemModel.findByIdAndUpdate(
+            itemId,
+            { name, category, description, price, image },
+            { new: true, runValidators: true }
+        );
+
         res.status(200).json({ message: 'Item został zaktualizowany', updatedItem });
-    }
-    catch (err) {
+    } catch (err) {
         console.error('Nie udało się zaktualizować itemu:', err);
         res.status(500).json({ message: 'Nie udało się zaktualizować itemu' });
     }
 });
 
 // Usuwanie
-router.delete('/:itemId', async (req, res) => {
+router.delete('/:id', tokenVerify, async (req, res) => {
     try {
-        const itemId = req.params;
+        const itemId = req.params.id;
 
-        const deletedItem = await ItemModel.findByIdAndDelete(itemId);
+        // Znajdź item do sprawdzenia autora 
+        const item = await ItemModel.findById(itemId);
 
-        if (!deletedItem) {
+        if (!item) {
             return res.status(404).json({ message: 'Nie znaleziono takiego itemu' });
         }
 
-        res.status(200).json({ message: 'Item został usunięty' });
-    }
-    catch (err) {
+        // Sprawdź, czy zalogowany użytkownik jest autorem
+        if (item.author.toString() !== req.userId) {
+            return res.status(403).json({ message: 'Brak uprawnień do usunięcia tego itemu' });
+        }
+
+        // Usuń item
+        const deletedItem = await ItemModel.findByIdAndDelete(itemId);
+
+        res.status(200).json({ message: 'Item został usunięty', deletedItem });
+    } catch (err) {
         console.error('Nie udało się usunąć itemu:', err);
         res.status(500).json({ message: 'Nie udało się usunąć itemu' });
     }

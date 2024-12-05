@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from 'react'
 
-import itemsData from "../data/items.json";
 import ItemCard from '../components/ItemCard';
+import { useFetchItemsQuery } from '../store/itemApi';
 
 const Searchpage = () => {
     const [keyWord, setKeyWord] = useState('');
-    const [filtProd, setFiltProd] = useState(itemsData);
-    
+    const [results, setResults] = useState([]);
+
+    const { data: items = [], isFetching } = useFetchItemsQuery({ category: '', minPrice: '', maxPrice: '' })
+
+
     const handleSearch = () => {
         const word = keyWord.toLowerCase();
-        const filtered = itemsData.filter(item => item.name.toLowerCase().includes(word));
-        setFiltProd(filtered)
+        const filtered = items.filter(item => item.name.toLowerCase().includes(word));
+        setResults(filtered)
     }
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
-          handleSearch()
+            handleSearch()
         }
-      }
+    }
 
 
     return (
@@ -49,8 +52,13 @@ const Searchpage = () => {
 
                 </div>
 
-                <ItemCard items={filtProd} />
-
+                {isFetching ? (
+                    <p>
+                        Ładowanie...
+                    </p>
+                ) : (
+                    <ItemCard items={results} />
+                )}
 
             </section>
 

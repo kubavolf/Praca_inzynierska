@@ -8,7 +8,7 @@ const ItemCard = ({ items }) => {
                 items.map((item, index) => (
                     <div key={index} className='item__card'>
                         <div>
-                            <Link to={`/shop/${item.id}`}>
+                            <Link to={`/shop/${item._id}`}>
                                 <img src={item.image} alt="item image" className='max-h-96 md:h-64 w-full object-cover hover:scale-95 duration-500' />
                                 <div>
                                     <h4 className='text-lg mt-2'>{item.name}</h4>
