@@ -4,16 +4,46 @@ const { verify } = require('jsonwebtoken');
 const tokenVerify = require('../users/tokenVerify');
 const router = express.Router();
 
-// Dodawanie nowego itemu
-router.post('/new-item', async (req, res) => {
-    try {
-        const { name, category, description, price, image, author } = req.body;
+const multer = require('multer');
+const path = require('path');
 
-        const newItem = new ItemModel({ name, category, description, price, image, author });
+
+
+const storage = multer.diskStorage({ //syfy związane z plikami (zdjęcie) tak jak u usera
+
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, '../../uploads')); // ścieżka do folderu `uploads`
+    },
+
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+const upload = multer({ storage });
+
+
+// Dodawanie nowego itemu
+router.post('/new-item', tokenVerify, upload.single('image'), async (req, res) => {
+
+    try {
+
+        const { name, category, description, price } = req.body;
+
+        const newItem = new ItemModel({
+            name,
+            category,
+            description,
+            price,
+            image: req.file ? `/uploads/${req.file.filename}` : null, // przechowywanie ścieżki do pliku
+            author: req.userId // autor  pobierany z tokenVerify
+        });
+
         await newItem.save();
 
         res.status(201).json({ message: 'Item został dodany', newItem });
     }
+    
     catch (err) {
         console.error('Nie udało się dodać itemu:', err);
         res.status(500).json({ message: 'Nie udało się dodać itemu' });
@@ -23,12 +53,18 @@ router.post('/new-item', async (req, res) => {
 
 // Pobieranie wszystkich itemów
 router.get('/', async (req, res) => {
+
     try {
-        const { category, minPrice, maxPrice } = req.query;
+
+        const { category, minPrice, maxPrice, userId } = req.query; // dodano userId
 
         let filter = {};
+        if (userId) {
+            filter.author = userId; // filtruj po autorze
+        }
+
         if (category && category !== 'wszystkie') {
-            filter.category = category
+            filter.category = category;
         }
 
         if (minPrice || maxPrice) {
@@ -37,11 +73,11 @@ router.get('/', async (req, res) => {
             if (maxPrice) filter.price.$lte = parseFloat(maxPrice); // Cena <= maxPrice
         }
 
-        const items = await ItemModel.find(filter).populate('author', 'email username');
+        const items = await ItemModel.find(filter).populate('author', 'email username phoneNumb');
 
         res.status(200).json(items);
-
     }
+    
     catch (err) {
         console.error('Nie udało się pobrać listy itemów:', err);
         res.status(500).json({ message: 'Nie udało się pobrać listy itemów' });
@@ -50,9 +86,10 @@ router.get('/', async (req, res) => {
 
 // Pobieranie itemu
 router.get('/:id', async (req, res) => {
+
     try {
         const itemId = req.params.id;
-        const item = await ItemModel.findById(itemId).populate('author', 'email username');
+        const item = await ItemModel.findById(itemId).populate('author', 'email username phoneNumb');
 
         if (!item) {
             return res.status(404).json({ message: 'Nie znaleziono takiego itemu' });
@@ -60,6 +97,7 @@ router.get('/:id', async (req, res) => {
 
         res.status(200).json(item);
     }
+
     catch (err) {
         console.error('Nie udało się pobrać itemu:', err);
         res.status(500).json({ message: 'Nie udało się pobrać itemu' });
@@ -68,22 +106,23 @@ router.get('/:id', async (req, res) => {
 
 // Aktualizacja
 router.patch('/edit-item/:id', tokenVerify, async (req, res) => {
+
     try {
         const itemId = req.params.id;
 
-        // Znajdź item, aby sprawdzić autora
+        // znajdź item, aby sprawdzić autora
         const item = await ItemModel.findById(itemId);
 
         if (!item) {
             return res.status(404).json({ message: 'Nie znaleziono takiego itemu' });
         }
 
-        // Sprawdź, czy zalogowany użytkownik jest autorem
+        // sprawdź, czy zalogowany użytkownik jest autorem
         if (item.author.toString() !== req.userId) {
             return res.status(403).json({ message: 'Brak uprawnień do edytowania tego itemu' });
         }
 
-        // Aktualizuj item
+        // aktualizuj item
         const { name, category, description, price, image } = req.body;
 
         const updatedItem = await ItemModel.findByIdAndUpdate(
@@ -93,14 +132,17 @@ router.patch('/edit-item/:id', tokenVerify, async (req, res) => {
         );
 
         res.status(200).json({ message: 'Item został zaktualizowany', updatedItem });
-    } catch (err) {
+    }
+    
+    catch (err) {
         console.error('Nie udało się zaktualizować itemu:', err);
         res.status(500).json({ message: 'Nie udało się zaktualizować itemu' });
     }
 });
 
-// Usuwanie
+// usuwanie
 router.delete('/:id', tokenVerify, async (req, res) => {
+
     try {
         const itemId = req.params.id;
 
@@ -120,7 +162,9 @@ router.delete('/:id', tokenVerify, async (req, res) => {
         const deletedItem = await ItemModel.findByIdAndDelete(itemId);
 
         res.status(200).json({ message: 'Item został usunięty', deletedItem });
-    } catch (err) {
+    }
+    
+    catch (err) {
         console.error('Nie udało się usunąć itemu:', err);
         res.status(500).json({ message: 'Nie udało się usunąć itemu' });
     }

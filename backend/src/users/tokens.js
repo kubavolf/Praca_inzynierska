@@ -4,6 +4,7 @@ const router = require('./user.route');
 const TOKEN_JWT = process.env.TOKEN;
 
 const tokenGeneration = async (userId) => {
+    
     try {
         const user = await UserModel.findById(userId);
         if (!user) {
@@ -12,7 +13,7 @@ const tokenGeneration = async (userId) => {
         }
 
         const token = jwt.sign({ userId: user._id, level: user.level },
-            TOKEN_JWT, { expiresIn: "30min" });
+            TOKEN_JWT, { expiresIn: "300min" });
         return token;
     }
     catch (err) {

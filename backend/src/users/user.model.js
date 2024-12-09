@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     email: { type: String, require: true, unique: true },
     password: { type: String, require: true },
     phoneNumb: {type: String, reqire: true },
-    picture: {type: String, default: 'https://static.vecteezy.com/system/resources/previews/020/765/399/non_2x/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg'}
+    picture: {type: String, default: '/uploads/default.jpg'}
     
 
 });

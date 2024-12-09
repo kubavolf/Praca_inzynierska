@@ -9,7 +9,7 @@ const itemApi = createApi({
 
     endpoints: (builder) => ({
 
-        // Pobieranie wszystkich produktów z filtrami
+        //pobieranie wszystkich produktów i filtry
         fetchItems: builder.query({
             query: ({ category, minPrice, maxPrice }) => {
                 const params = new URLSearchParams({
@@ -22,23 +22,32 @@ const itemApi = createApi({
             providesTags: ["items"]
         }),
 
-        // Pobieranie pojedynczego produktu
+        //pobieranie jednego produktu
         fetchItemById: builder.query({
             query: (id) => `/${id}`,
             providesTags: (result, error, id) => [{ type: "item", id }]
         }),
 
-        // Dodawanie nowego produktu
+        //ogłoszenia danego użytokwnika
+        fetchUserItems: builder.query({
+            query: (userId) => `/?userId=${userId}`, //zapytanie do backendu z userId
+            providesTags: (result, error, userId) =>
+                result
+                    ? [...result.map(({ _id }) => ({ type: "item", id: _id })), { type: "item", id: "USER_ITEMS" }]
+                    : [{ type: "item", id: "USER_ITEMS" }],
+        }),
+
+        //dodawanie nowego produktu
         addItem: builder.mutation({
             query: (newitem) => ({
                 url: "/new-item",
                 method: "POST",
-                body: newitem
+                body: newitem,
             }),
             invalidatesTags: ["items"]
         }),
 
-        // Aktualizacja produktu
+        //aktualizacja produktu
         updateItem: builder.mutation({
             query: ({ id, updatedData }) => ({
                 url: `/edit-item/${id}`,
@@ -49,7 +58,7 @@ const itemApi = createApi({
             invalidatesTags: (result, error, { id }) => [{ type: "item", id }, "items"]
         }),
 
-        // Usuwanie produktu
+        //usuwanie produktu
         deleteItem: builder.mutation({
             query: (id) => ({
                 url: `/${id}`,
@@ -62,6 +71,6 @@ const itemApi = createApi({
 });
 
 // Eksportowanie hooków do użycia w komponentach
-export const { useFetchItemsQuery, useFetchItemByIdQuery, useAddItemMutation, useUpdateItemMutation, useDeleteItemMutation } = itemApi;
+export const { useFetchItemsQuery, useFetchItemByIdQuery, useAddItemMutation, useUpdateItemMutation, useDeleteItemMutation, useFetchUserItemsQuery } = itemApi;
 
 export default itemApi;

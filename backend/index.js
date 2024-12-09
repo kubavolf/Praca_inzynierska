@@ -5,6 +5,8 @@ require('dotenv').config() // kolejny import biblioteki z pliku .env
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser');
 
+const path = require('path');
+
 
 const app = express() //wywołanie funkcji zaimportowanej
 const port = process.env.PORT || 3000;
@@ -16,7 +18,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 (async function main() {
   try {

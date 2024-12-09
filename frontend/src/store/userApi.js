@@ -10,6 +10,7 @@ const userApi = createApi({
     endpoints: (builder) => ({
 
         register: builder.mutation({
+            
             query: (newUser) => ({
                 url: "/register",
                 method: "POST",
@@ -18,6 +19,7 @@ const userApi = createApi({
         }),
 
         login: builder.mutation({
+
             query: (data) => ({
                 url: "/login",
                 method: "POST",
@@ -26,6 +28,7 @@ const userApi = createApi({
         }),
 
         logout: builder.mutation({
+
             query: () => ({
                 url: "/logout",
                 method: "POST"
@@ -33,6 +36,7 @@ const userApi = createApi({
         }),
 
         get: builder.mutation({
+
             query: () => ({
                 url: "/users",
                 method: "GET"
@@ -45,33 +49,49 @@ const userApi = createApi({
         }),
 
         delete: builder.mutation({
+
             query: (userId) => ({
                 url: `/users/${userId}`,
                 method: "DELETE"
             }),
+
             invalidatesTags: ["User"]
         }),
 
         updatelevel: builder.mutation({
+
             query: ({ userId, level }) => ({
                 url: `/users/${userId}`,
                 method: "PUT",
                 body: { level }
             }),
+
             refetchOnMount: true,
             invalidatesTags: ["User"]
+
         }),
 
         edit: builder.mutation({
+
             query: ({ userData }) => ({
                 url: "/edit-profile",
                 method: "PATCH",
                 body: { userData }
             })
 
-        })
+        }),
+
+        updateProfile: builder.mutation({
+
+            query: (userData) => ({
+              url: '/edit-profile',
+              method: 'PATCH',
+              body: userData,
+              credentials: 'include', // coookieeeees (np. tokena)
+            }),
+          }),
     })
 })
 
-export const { useRegisterMutation, useLoginMutation, useLogoutMutation, useEditMutation, useGetMutation, useDeleteMutation, useUpdatelevelMutation } = userApi;
+export const { useRegisterMutation, useLoginMutation, useLogoutMutation, useEditMutation, useGetMutation, useDeleteMutation, useUpdatelevelMutation, useUpdateProfileMutation } = userApi;
 export default userApi;

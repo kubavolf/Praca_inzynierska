@@ -55,8 +55,7 @@ const Navbar = () => {
         <>
 
           <img
-            src={user?.picture}
-            alt="User Avatar"
+            src={`http://localhost:3000${user?.picture}`}
             className='cursor-pointer size-10 rounded-xl object-scale-down'
             onClick={toggleUserMenu} // Obsługa kliknięcia w avatar
           />
